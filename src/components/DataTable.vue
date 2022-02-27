@@ -21,11 +21,13 @@
       <tr v-for="(country, index) in countries" :key="index">
         <td class="flag">
           {{ index }}
-          <img
-            :src="country.flags.png"
-            :alt="country.name.official"
-            class="flag-img"
-          />
+          <a href="#" @click.prevent="showModal(country.ccn3)">
+            <img
+              :src="country.flags.png"
+              :alt="country.name.official"
+              class="flag-img"
+            />
+          </a>
         </td>
         <td>{{ country.name.official }}</td>
         <td>{{ country.cca2 }}</td>
@@ -61,6 +63,7 @@
         </td>
       </tr>
     </tbody>
+    <Modal ref="modalRef"></Modal>
   </table>
 </template>
 
@@ -79,7 +82,28 @@ export default {
   data() {
     return {};
   },
-  computed: {}
+  computed: {},
+  methods: {
+    async showModal(ccn3) {
+      this.$refs.modalRef.country = await this.fetchCountry(ccn3);
+      $("#countryDetail").modal("show");
+    },
+    async fetchCountry(ccn3) {
+      const url = `https://restcountries.com/v3.1/alpha/${ccn3}`;
+      let data = {};
+      
+      await fetch(url, {})
+        .then(res => res.json())
+        .then(res => {
+          data = res[0];
+        })
+        .catch(err => {
+          throw err;
+        });
+
+      return data;
+    }
+  }
 };
 </script>
 

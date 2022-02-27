@@ -1,61 +1,121 @@
 <template>
-  <div>
-    <button
-      type="button"
-      class="btn btn-primary"
-      data-toggle="modal"
-      data-target="#staticBackdrop"
-    >
-      Launch demo modal
-    </button>
-    <div
-      class="modal fade"
-      id="staticBackdrop"
-      data-backdrop="static"
-      data-keyboard="false"
-      tabindex="-1"
-      aria-labelledby="staticBackdropLabel"
-      aria-hidden="true"
-    >
-      <div id="myModal" class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
+  <div
+    class="modal fade"
+    id="countryDetail"
+    data-backdrop="static"
+    data-keyboard="false"
+    tabindex="-1"
+  >
+    <div id="myModal" class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="countryDetailLabel">
+            {{ heading }}
+          </h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div v-if="!isEmptyData(country)" class="row flex-column">
+            <div class="col">
+              <img
+                :src="country.flags.png"
+                :alt="country.name.official"
+                class="mb-4 img-fluid"
+              />
+            </div>
+            <div class="col">
+              <div class="row">
+                <div class="col-6 text-left">
+                  <p>
+                    <span class="text-capitalize font-weight-bold"
+                      >population:
+                    </span>
+                    {{ country.population }}
+                  </p>
+                  <p>
+                    <span class="text-capitalize font-weight-bold"
+                      >region: </span
+                    >{{ country.region }}
+                  </p>
+                  <p>
+                    <span class="text-capitalize font-weight-bold"
+                      >sub region:
+                    </span>
+                    {{ country.subregion || "N/A" }}
+                  </p>
+                  <p>
+                    <span class="text-capitalize font-weight-bold"
+                      >latitude: </span
+                    >{{ country.latlng[0] }}
+                  </p>
+                  <p>
+                    <span class="text-capitalize font-weight-bold"
+                      >longitude: </span
+                    >{{ country.latlng[1] }}
+                  </p>
+                </div>
+                <div class="col-6 text-left">
+                  <p>
+                    <span class="text-capitalize font-weight-bold"
+                      >capital:
+                    </span>
+                    {{ capital }}
+                  </p>
+                  <p>
+                    <span class="text-capitalize font-weight-bold"
+                      >top level domain:
+                    </span>
+                    {{ tld }}
+                  </p>
+                  <p>
+                    <span class="text-capitalize font-weight-bold"
+                      >currencies:
+                    </span>
+                    {{ currencies }}
+                  </p>
+                  <p>
+                    <span class="text-capitalize font-weight-bold"
+                      >languages:
+                    </span>
+                    {{ languages }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col text-left">
+              <p>
+                <span class="text-capitalize font-weight-bold">
+                  border countries:
+                </span>
+                <template v-if="borders !== 'N/A'">
+                  <a
+                    v-for="(country, index) in borders"
+                    :key="index"
+                    @click.prevent="fetchCountry(country.ccn3)"
+                    href="#"
+                    class="d-inline-block p-1 mr-2 mb-1 alert-info  rounded"
+                  >
+                    {{ country.name }}
+                  </a>
+                </template>
+                <template v-else>
+                  <span>{{ borders }}</span>
+                </template>
+              </p>
+            </div>
           </div>
-          <div class="modal-body">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Natus,
-            dolorem quo, officiis repellat vitae odit in ipsum neque eveniet
-            consectetur nobis quis autem debitis dolorum deserunt officia soluta
-            illo laboriosam. Libero fuga error rerum optio enim dolorum nesciunt
-            suscipit nisi voluptas id! Eius placeat quas eos perspiciatis,
-            ratione dolore reprehenderit ut, quibusdam earum, error accusantium?
-            Nostrum minus quasi, consequuntur culpa porro reprehenderit
-            laboriosam sapiente rerum at eveniet placeat similique natus nisi ex
-            illum necessitatibus eius delectus libero velit? Ducimus eius,
-            consequatur quos omnis cupiditate placeat fuga? Officiis ratione
-            sunt consequatur deleniti tenetur? Praesentium quaerat accusamus
-            alias tempore magni pariatur odit similique voluptatem vitae
-            explicabo fuga est obcaecati recusandae atque quidem aperiam, iure,
-            sed nostrum eum. Labore sunt esse, totam ea alias necessitatibus
-            quod.
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-dismiss="modal"
-            >
-              Close
-            </button>
-          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Close
+          </button>
         </div>
       </div>
     </div>
@@ -66,10 +126,102 @@
 export default {
   name: "Modal",
   data() {
-    return {};
+    return {
+      country: {},
+      borders: "N/A",
+      ex: {
+        latlng: [50.83333333, 4.0],
+        maps: {
+          googleMaps: "https://goo.gl/maps/UQQzat85TCtPRXAL8",
+          openStreetMaps: "https://www.openstreetmap.org/relation/52411"
+        },
+        timezones: ["UTC+01:00"],
+        startOfWeek: "monday",
+        capitalInfo: { latlng: [50.83, 4.33] }
+      }
+    };
   },
-  mounted() {},
-  method: {}
+  computed: {
+    heading() {
+      return !this.isEmptyData(this.country) ? this.country.name.official : "";
+    },
+    capital() {
+      if (this.country.capital) {
+        return Object.values(this.country.capital).join(", ");
+      } else {
+        return "N/A";
+      }
+    },
+    tld() {
+      if (this.country.tld) {
+        return Object.values(this.country.tld).join(", ");
+      } else {
+        return "N/A";
+      }
+    },
+    currencies() {
+      if (this.country.currencies) {
+        return Object.entries(this.country.currencies)
+          .map(([currency, content]) => {
+            return `${content.name}(${content.symbol})`;
+          })
+          .join(", ");
+      } else {
+        return "N/A";
+      }
+    },
+    languages() {
+      if (this.country.languages) {
+        return Object.values(this.country.languages).join(", ");
+      } else {
+        return "N/A";
+      }
+    }
+  },
+  methods: {
+    isEmptyData(data) {
+      return $.isEmptyObject(data);
+    },
+    async fetchBorders(codes) {
+      const url = `https://restcountries.com/v3.1/alpha?codes=${codes}`;
+      let data = {};
+      await fetch(url, {})
+        .then(res => res.json())
+        .then(res => {
+          data = res.map(country => ({
+            name: country.name.common,
+            ccn3: country.ccn3
+          }));
+        })
+        .catch(err => {
+          throw err;
+        });
+
+      return data;
+    },
+    async fetchCountry(ccn3) {
+      const url = `https://restcountries.com/v3.1/alpha/${ccn3}`;
+
+      await fetch(url, {})
+        .then(res => res.json())
+        .then(res => {
+          this.country = res[0];
+        })
+        .catch(err => {
+          throw err;
+        });
+    }
+  },
+  watch: {
+    async country() {
+      if (!this.isEmptyData(this.country) && this.country.borders) {
+        this.borders = await this.fetchBorders(this.country.borders.join(","));
+      } else {
+        this.borders = "N/A";
+      }
+    }
+  },
+  mounted() {}
 };
 </script>
 
