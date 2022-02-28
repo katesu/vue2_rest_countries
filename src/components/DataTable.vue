@@ -5,8 +5,8 @@
         <th scope="col">國旗</th>
         <th scope="col">
           國家名稱
-          <a>
-            <i class="bi bi-sort-alpha-down" style="font-size:20px"></i>
+          <a @click="sortData" href="#" class="p-1">
+            <i :class="sortClass"></i>
           </a>
         </th>
         <th>2位國家代碼</th>
@@ -80,9 +80,27 @@ export default {
     }
   },
   data() {
-    return {};
+    return {
+      sortBy: null
+    };
   },
-  computed: {},
+  computed: {
+    sortClass() {
+      const isSort =
+        this.sortBy === null ? this.sortBy : this.sortBy === "ascending";
+      const style = ["bi", "icon"];
+
+      if (isSort === null) {
+        return [...style, "text-black-50", "bi-sort-alpha-down"];
+      } else {
+        return [
+          ...style,
+          "text-body",
+          `bi-sort-alpha-${isSort ? "down" : "up"}`
+        ];
+      }
+    }
+  },
   methods: {
     async showModal(ccn3) {
       this.$refs.modalRef.country = await this.fetchCountry(ccn3);
@@ -91,7 +109,7 @@ export default {
     async fetchCountry(ccn3) {
       const url = `https://restcountries.com/v3.1/alpha/${ccn3}`;
       let data = {};
-      
+
       await fetch(url, {})
         .then(res => res.json())
         .then(res => {
@@ -102,6 +120,18 @@ export default {
         });
 
       return data;
+    },
+    sortData() {
+      if (this.sortBy === null) {
+        this.sortBy = "ascending";
+      } else {
+        this.sortBy = this.sortBy === "ascending" ? "descending" : "ascending";
+      }
+    }
+  },
+  watch: {
+    sortBy(value) {
+      this.$emit("changeSort", value);
     }
   }
 };
@@ -114,4 +144,6 @@ export default {
   height: auto
 .idd
   min-width: 120px
+.icon
+  font-size: 20px
 </style>

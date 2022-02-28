@@ -8,7 +8,7 @@
           </div>
         </div>
       </div>
-      <DataTable :countries="countries"></DataTable>
+      <DataTable :countries="countries" @changeSort="sortCountries"></DataTable>
       <pagination></pagination>
     </div>
   </div>
@@ -23,7 +23,8 @@ export default {
   components: { Pagination, DataTable },
   data() {
     return {
-      countries: []
+      countries: [],
+      sort: null
     };
   },
   methods: {
@@ -32,6 +33,23 @@ export default {
 
       this.countries = await fetch(url, {}).then(res => res.json());
       console.log("countries :>> ", this.countries);
+    },
+    sortCountries(value) {
+
+      this.sort = value;
+      this.countries.sort((current, next) => {
+        const currentName = current.name.official.toUpperCase();
+        const nextName = next.name.official.toUpperCase();
+
+        if (currentName < nextName) {
+          return value === "ascending" ? -1 : 1;
+        }
+
+        if (currentName > nextName) {
+          return value === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
     }
   },
   mounted() {
