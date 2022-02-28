@@ -1,5 +1,5 @@
 <template>
-  <nav aria-label="Page navigation">
+  <nav v-show="data.length" aria-label="Page navigation">
     <ul class="pagination justify-content-center">
       <li :class="['page-item', !hasPrevPage && 'disabled']">
         <a
