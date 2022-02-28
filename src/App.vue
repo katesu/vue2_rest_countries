@@ -9,7 +9,6 @@
         </div>
       </div>
       <DataTable :countries="countries"></DataTable>
-      <Modal></Modal>
       <pagination></pagination>
     </div>
   </div>

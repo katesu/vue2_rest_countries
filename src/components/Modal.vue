@@ -129,16 +129,6 @@ export default {
     return {
       country: {},
       borders: "N/A",
-      ex: {
-        latlng: [50.83333333, 4.0],
-        maps: {
-          googleMaps: "https://goo.gl/maps/UQQzat85TCtPRXAL8",
-          openStreetMaps: "https://www.openstreetmap.org/relation/52411"
-        },
-        timezones: ["UTC+01:00"],
-        startOfWeek: "monday",
-        capitalInfo: { latlng: [50.83, 4.33] }
-      }
     };
   },
   computed: {
