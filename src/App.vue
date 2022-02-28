@@ -10,7 +10,7 @@
       </div>
       <DataTable
         :countries="displayCountries"
-        @changeSort="sortCountries"
+        @sortData="sortCountries"
       ></DataTable>
       <pagination
         :data="countries"
@@ -38,7 +38,14 @@ export default {
     async fetchCountries() {
       const url = "https://restcountries.com/v3.1/all";
 
-      this.countries = await fetch(url, {}).then(res => res.json());
+      await fetch(url, {})
+        .then(res => res.json())
+        .then(res => {
+          this.countries = res;
+        })
+        .catch(err => {
+          throw err;
+        });
     },
     sortCountries(value) {
       this.sortBy = value;

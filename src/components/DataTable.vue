@@ -127,13 +127,9 @@ export default {
       } else {
         this.sortBy = this.sortBy === "ascending" ? "descending" : "ascending";
       }
+      this.$emit("sortData", this.sortBy);
     }
   },
-  watch: {
-    sortBy(value) {
-      this.$emit("changeSort", value);
-    }
-  }
 };
 </script>
 
