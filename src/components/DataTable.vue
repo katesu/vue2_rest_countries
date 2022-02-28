@@ -66,7 +66,8 @@
       </tbody>
       <Modal ref="modalRef"></Modal>
     </table>
-    <p v-if="isLoading">資料載入中，請稍後</p>
+    <p v-show="isLoading">資料載入中，請稍後</p>
+    <p v-show="alert">{{ alert }}</p>
   </div>
 </template>
 
@@ -81,6 +82,10 @@ export default {
       type: [Array],
       default: []
     },
+    alert: {
+      type: [String],
+      default: ""
+    }
   },
   data() {
     return {

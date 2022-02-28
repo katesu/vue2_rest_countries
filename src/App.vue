@@ -3,19 +3,37 @@
     <div class="container-lg">
       <div class="row">
         <div class="col-auto mr-auto">
-          <div class="input-group">
-            <input type="text" class="form-control" placeholder="Search" />
+          <div class="input-group mb-3">
+            <input
+              v-model="inputSearch"
+              @input="searchCountries"
+              type="text"
+              class="form-control searchInput"
+              placeholder="Search"
+            />
+            <div class="input-group-append">
+              <button
+                @click="clearSearchText"
+                class="btn searchClearTextBtn"
+                type="button"
+              >
+                <i class="bi bi-x-circle-fill"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
       <DataTable
-        :countries="displayCountries"
+        :countries="countriesForDisplay"
+        :alert="alertText"
         @sortData="sortCountries"
       ></DataTable>
-      <pagination
-        :data="countries"
-        @updateDataScope="getNowPageData"
-      ></pagination>
+      <div class="my-5">
+        <pagination
+          :data="dataForPagination"
+          @updateDataScope="getNowPageData"
+        ></pagination>
+      </div>
     </div>
   </div>
 </template>
@@ -30,9 +48,27 @@ export default {
   data() {
     return {
       countries: [],
-      displayCountries: [],
-      sortBy: null
+      countriesForDisplay: [],
+      countriesAfterFilter: [],
+      sortBy: null,
+      inputSearch: "",
+      isSearching: false
     };
+  },
+  computed: {
+    getIsSearching() {
+      return this.inputSearch.length > 0;
+    },
+    dataForPagination() {
+      return this.isSearching ? this.countriesAfterFilter : this.countries;
+    },
+    alertText() {
+      if (this.isSearching && !this.countriesAfterFilter.length) {
+        return "查無此國名，請重新輸入";
+      } else {
+        return "";
+      }
+    }
   },
   methods: {
     async fetchCountries() {
@@ -48,8 +84,8 @@ export default {
         });
     },
     sortCountries(value) {
-      this.sortBy = value;
-      this.countries.sort((current, next) => {
+      this.sortBy = value || this.sortBy;
+      this.dataForPagination.sort((current, next) => {
         const currentName = current.name.official.toUpperCase();
         const nextName = next.name.official.toUpperCase();
 
@@ -64,9 +100,32 @@ export default {
       });
     },
     getNowPageData(index) {
-      this.displayCountries = this.countries.filter(
+      const data = this.dataForPagination;
+      this.countriesForDisplay = data.filter(
         (country, i) => i + 1 >= index.from && i + 1 <= index.end
       );
+    },
+    searchCountries() {
+      if (this.inputSearch.length) {
+        const keyword = this.inputSearch.replace(
+          /([.?*+^$[\]\\(){}|-])/g,
+          "\\$1"
+        );
+        const reg = new RegExp(keyword, "gi");
+
+        this.isSearching = true;
+        this.countriesAfterFilter = this.countries.filter(country =>
+          reg.test(country.name.official)
+        );
+      } else {
+        this.isSearching = false;
+      }
+      this.sortBy && this.sortCountries();
+    },
+    clearSearchText() {
+      this.isSearching = false;
+      this.inputSearch = "";
+      this.sortBy && this.sortCountries();
     }
   },
   mounted() {
@@ -87,4 +146,19 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
+</style>
+
+<style lang="sass" scope>
+.searchInput
+  border-right-color: transparent
+  &:focus
+    border-color: #ced4da
+    border-right-color: transparent
+    box-shadow: 0 0 0 0 transparent
+
+.searchClearTextBtn
+  border-color: #ced4da;
+  border-left-color: transparent
+  &:focus
+    box-shadow: 0 0 0 0 transparent
 </style>
