@@ -9,7 +9,7 @@
     <div id="myModal" class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="countryDetailLabel">
+          <h5 class="modal-title text-left" id="countryDetailLabel">
             {{ heading }}
           </h5>
           <button
@@ -133,7 +133,9 @@ export default {
   },
   computed: {
     heading() {
-      return !this.isEmptyData(this.country) ? this.country.name.official : "";
+      return !this.isEmptyData(this.country)
+        ? `${this.country.name.official}(${this.country.name.common})`
+        : "";
     },
     capital() {
       if (this.country.capital) {
