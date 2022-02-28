@@ -8,8 +8,14 @@
           </div>
         </div>
       </div>
-      <DataTable :countries="countries" @changeSort="sortCountries"></DataTable>
-      <pagination></pagination>
+      <DataTable
+        :countries="displayCountries"
+        @changeSort="sortCountries"
+      ></DataTable>
+      <pagination
+        :data="countries"
+        @updateDataScope="getNowPageData"
+      ></pagination>
     </div>
   </div>
 </template>
@@ -24,7 +30,8 @@ export default {
   data() {
     return {
       countries: [],
-      sort: null
+      displayCountries: [],
+      sortBy: null
     };
   },
   methods: {
@@ -32,24 +39,27 @@ export default {
       const url = "https://restcountries.com/v3.1/all";
 
       this.countries = await fetch(url, {}).then(res => res.json());
-      console.log("countries :>> ", this.countries);
     },
     sortCountries(value) {
-
-      this.sort = value;
+      this.sortBy = value;
       this.countries.sort((current, next) => {
         const currentName = current.name.official.toUpperCase();
         const nextName = next.name.official.toUpperCase();
 
         if (currentName < nextName) {
-          return value === "ascending" ? -1 : 1;
+          return this.sortBy === "ascending" ? -1 : 1;
         }
 
         if (currentName > nextName) {
-          return value === "ascending" ? 1 : -1;
+          return this.sortBy === "ascending" ? 1 : -1;
         }
         return 0;
       });
+    },
+    getNowPageData(index) {
+      this.displayCountries = this.countries.filter(
+        (country, i) => i + 1 >= index.from && i + 1 <= index.end
+      );
     }
   },
   mounted() {
