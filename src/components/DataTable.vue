@@ -1,70 +1,73 @@
 <template>
-  <table class="table table-striped table-responsive-lg">
-    <thead>
-      <tr>
-        <th scope="col">國旗</th>
-        <th scope="col">
-          國家名稱
-          <a @click="sortData" href="#" class="p-1">
-            <i :class="sortClass"></i>
-          </a>
-        </th>
-        <th>2位國家代碼</th>
-        <th>3位國家代碼</th>
-        <th>母語名稱</th>
-        <th>替代國家名稱</th>
-        <th>國際電話區號</th>
-      </tr>
-    </thead>
+  <div>
+    <table class="table table-striped table-responsive-lg">
+      <thead>
+        <tr>
+          <th scope="col">國旗</th>
+          <th scope="col">
+            國家名稱
+            <a @click="sortData" href="#" class="p-1">
+              <i :class="sortClass"></i>
+            </a>
+          </th>
+          <th>2位國家代碼</th>
+          <th>3位國家代碼</th>
+          <th>母語名稱</th>
+          <th>替代國家名稱</th>
+          <th>國際電話區號</th>
+        </tr>
+      </thead>
 
-    <tbody>
-      <tr v-for="(country, index) in countries" :key="index">
-        <td class="flag">
-          {{ index }}
-          <a href="#" @click.prevent="showModal(country.ccn3)">
-            <img
-              :src="country.flags.png"
-              :alt="country.name.official"
-              class="flag-img"
-            />
-          </a>
-        </td>
-        <td>{{ country.name.official }}</td>
-        <td>{{ country.cca2 }}</td>
-        <td>{{ country.cca3 }}</td>
-        <td>
-          <div
-            v-for="(lang, index) in country.name.nativeName"
-            :key="index"
-            class="text-left mb-2"
-          >
-            <span class="alert-dark p-1">{{ index.toUpperCase() }}</span>
-            <span>{{ `${lang.official}` }}</span>
-          </div>
-        </td>
-        <td>
-          <span
-            v-for="(spelling, index) in country.altSpellings"
-            :key="index"
-            :class="[
-              'd-block',
-              Object.keys(country.altSpellings).length > 1 && 'border'
-            ]"
-            >{{ spelling }}</span
-          >
-        </td>
-        <td class="idd">
-          <span
-            v-for="(suffix, index) in country.idd.suffixes"
-            :key="index"
-            class="d-block"
-            >{{ `${country.idd.root}${suffix}` }}</span
-          >
-        </td>
-      </tr>
-    </tbody>
-    <Modal ref="modalRef"></Modal>
-  </table>
+      <tbody>
+        <tr v-for="(country, index) in countries" :key="index">
+          <td class="flag">
+            {{ index }}
+            <a href="#" @click.prevent="showModal(country.ccn3)">
+              <img
+                :src="country.flags.png"
+                :alt="country.name.official"
+                class="flag-img"
+              />
+            </a>
+          </td>
+          <td>{{ country.name.official }}</td>
+          <td>{{ country.cca2 }}</td>
+          <td>{{ country.cca3 }}</td>
+          <td>
+            <div
+              v-for="(lang, index) in country.name.nativeName"
+              :key="index"
+              class="text-left mb-2"
+            >
+              <span class="alert-dark p-1">{{ index.toUpperCase() }}</span>
+              <span>{{ `${lang.official}` }}</span>
+            </div>
+          </td>
+          <td>
+            <span
+              v-for="(spelling, index) in country.altSpellings"
+              :key="index"
+              :class="[
+                'd-block',
+                Object.keys(country.altSpellings).length > 1 && 'border'
+              ]"
+              >{{ spelling }}</span
+            >
+          </td>
+          <td class="idd">
+            <span
+              v-for="(suffix, index) in country.idd.suffixes"
+              :key="index"
+              class="d-block"
+              >{{ `${country.idd.root}${suffix}` }}</span
+            >
+          </td>
+        </tr>
+      </tbody>
+      <Modal ref="modalRef"></Modal>
+    </table>
+    <p v-if="isLoading">資料載入中，請稍後</p>
+  </div>
 </template>
 
 <script>
@@ -77,11 +80,12 @@ export default {
     countries: {
       type: [Array],
       default: []
-    }
+    },
   },
   data() {
     return {
-      sortBy: null
+      sortBy: null,
+      isLoading: true
     };
   },
   computed: {
@@ -130,6 +134,13 @@ export default {
       this.$emit("sortData", this.sortBy);
     }
   },
+  watch: {
+    countries(newVal, oldVal) {
+      if (newVal.length > 0 && oldVal.length === 0) {
+        this.isLoading = false;
+      }
+    }
+  }
 };
 </script>
 
