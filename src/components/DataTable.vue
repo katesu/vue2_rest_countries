@@ -66,7 +66,6 @@
       </tbody>
     </table>
     <Modal ref="modalRef"></Modal>
-    <p v-if="isLoading">資料載入中，請稍後</p>
     <p v-if="alert">{{ alert }}</p>
   </div>
 </template>
@@ -90,7 +89,6 @@ export default {
   data() {
     return {
       sortBy: null,
-      isLoading: true
     };
   },
   computed: {
@@ -112,8 +110,10 @@ export default {
   },
   methods: {
     async showModal(ccn3) {
+      this.$emit("isLoading", true);
       this.$refs.modalRef.country = await this.fetchCountry(ccn3);
       $("#countryDetail").modal("show");
+      this.$emit("isLoading", false);
     },
     async fetchCountry(ccn3) {
       const url = `https://restcountries.com/v3.1/alpha/${ccn3}`;
@@ -142,7 +142,7 @@ export default {
   watch: {
     countries(newVal, oldVal) {
       if (newVal.length > 0 && oldVal.length === 0) {
-        this.isLoading = false;
+        this.$emit('isLoading', false)
       }
     }
   }

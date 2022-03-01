@@ -27,6 +27,7 @@
         :countries="countriesForDisplay"
         :alert="alertText"
         @sortData="sortCountries"
+        @isLoading="toggleLoading"
       ></DataTable>
       <div class="my-5">
         <pagination
@@ -34,6 +35,12 @@
           @updateDataScope="getNowPageData"
         ></pagination>
       </div>
+    </div>
+    <div
+      v-if="isLoading"
+      class="loading-modal d-flex justify-content-center align-items-center"
+    >
+      <div class="alert alert-light">資料載入中，請稍後</div>
     </div>
   </div>
 </template>
@@ -52,7 +59,8 @@ export default {
       countriesAfterFilter: [],
       sortBy: null,
       inputSearch: "",
-      isSearching: false
+      isSearching: false,
+      isLoading: false
     };
   },
   computed: {
@@ -72,6 +80,7 @@ export default {
   },
   methods: {
     async fetchCountries() {
+      this.isLoading = true;
       const url = "https://restcountries.com/v3.1/all";
 
       await fetch(url, {})
@@ -126,6 +135,9 @@ export default {
       this.isSearching = false;
       this.inputSearch = "";
       this.sortBy && this.sortCountries();
+    },
+    toggleLoading(value) {
+      this.isLoading = value;
     }
   },
   mounted() {
@@ -161,4 +173,13 @@ export default {
   border-left-color: transparent
   &:focus
     box-shadow: 0 0 0 0 transparent
+
+.loading-modal
+  position: fixed
+  top: 0
+  left: 0
+  z-index: 999
+  height: 100%
+  width: 100%
+  background: rgba(0,0,0,0.5)
 </style>
