@@ -6,18 +6,13 @@
     data-keyboard="false"
     tabindex="-1"
   >
-    <div id="myModal" class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title text-left" id="countryDetailLabel">
             {{ heading }}
           </h5>
-          <button
-            type="button"
-            class="close"
-            data-dismiss="modal"
-            aria-label="Close"
-          >
+          <button type="button" class="close" data-dismiss="modal">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -128,7 +123,7 @@ export default {
   data() {
     return {
       country: {},
-      borders: "N/A",
+      borders: "N/A"
     };
   },
   computed: {
@@ -217,4 +212,10 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="sass" scoped>
+  .modal-dialog
+    @media screen and (max-width: 575px)
+      width: 85%
+      margin-left: auto
+      margin-right: auto
+</style>

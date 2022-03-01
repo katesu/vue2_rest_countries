@@ -2,25 +2,25 @@
   <div>
     <table class="table table-striped table-responsive-lg">
       <thead>
-        <tr>
-          <th scope="col">國旗</th>
-          <th scope="col">
+        <tr class="d-flex">
+          <th class="col-2">國旗</th>
+          <th class="col-2">
             國家名稱
             <a @click="sortData" href="#" class="p-1">
               <i :class="sortClass"></i>
             </a>
           </th>
-          <th>2位國家代碼</th>
-          <th>3位國家代碼</th>
-          <th>母語名稱</th>
-          <th>替代國家名稱</th>
-          <th>國際電話區號</th>
+          <th class="col-1">2位國家代碼</th>
+          <th class="col-1">3位國家代碼</th>
+          <th class="col-2">母語名稱</th>
+          <th class="col-2">替代國家名稱</th>
+          <th class="col-2">國際電話區號</th>
         </tr>
       </thead>
 
       <tbody>
-        <tr v-for="(country, index) in countries" :key="index">
-          <td class="flag">
+        <tr v-for="(country, index) in countries" :key="index" class="d-flex">
+          <td class="col-2 idd">
             {{ index }}
             <a href="#" @click.prevent="showModal(country.ccn3)">
               <img
@@ -30,10 +30,10 @@
               />
             </a>
           </td>
-          <td>{{ country.name.official }}</td>
-          <td>{{ country.cca2 }}</td>
-          <td>{{ country.cca3 }}</td>
-          <td>
+          <td class="col-2">{{ country.name.official }}</td>
+          <td class="col-1">{{ country.cca2 }}</td>
+          <td class="col-1">{{ country.cca3 }}</td>
+          <td class="col-2">
             <div
               v-for="(lang, index) in country.name.nativeName"
               :key="index"
@@ -43,7 +43,7 @@
               <span>{{ `${lang.official}` }}</span>
             </div>
           </td>
-          <td>
+          <td class="col-2">
             <span
               v-for="(spelling, index) in country.altSpellings"
               :key="index"
@@ -54,7 +54,7 @@
               >{{ spelling }}</span
             >
           </td>
-          <td class="idd">
+          <td class="col-2">
             <span
               v-for="(suffix, index) in country.idd.suffixes"
               :key="index"
@@ -64,10 +64,10 @@
           </td>
         </tr>
       </tbody>
-      <Modal ref="modalRef"></Modal>
     </table>
-    <p v-show="isLoading">資料載入中，請稍後</p>
-    <p v-show="alert">{{ alert }}</p>
+    <Modal ref="modalRef"></Modal>
+    <p v-if="isLoading">資料載入中，請稍後</p>
+    <p v-if="alert">{{ alert }}</p>
   </div>
 </template>
 
@@ -155,7 +155,7 @@ export default {
   min-width: 100px
   height: auto
 .idd
-  min-width: 120px
+  min-width: 100px
 .icon
   font-size: 20px
 </style>
